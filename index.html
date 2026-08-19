@@ -339,7 +339,7 @@
 
   .hist-row{
     display:grid;
-    grid-template-columns:1.1fr 0.8fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
+    grid-template-columns:1.1fr 0.8fr 1fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
     gap:6px;
     align-items:end;
     padding:10px 0;
@@ -353,7 +353,7 @@
     cursor:pointer; font-size:14px; padding:6px; line-height:1;
   }
   .hist-scroll{overflow-x:auto;}
-  @media (max-width:760px){ .hist-row{grid-template-columns:repeat(8, 130px); min-width:900px;} }
+  @media (max-width:760px){ .hist-row{grid-template-columns:repeat(9, 130px); min-width:1010px;} }
 
   .toast{
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
@@ -667,7 +667,7 @@
   <div class="modal">
     <button class="close-x" onclick="closeConfig()">&times;</button>
     <h2>Configurações — CUB e percentuais</h2>
-    <div class="sub">Atualize aqui todo mês. Os valores ficam salvos e são usados em todas as calculadoras.</div>
+    <div class="sub">Os valores abaixo vêm do arquivo cub-data.js. Alterações feitas aqui ficam salvas <strong>só neste navegador</strong> (para testes). Para atualizar o CUB para todos que acessam o site, use o arquivo gerador-cub.html e substitua o cub-data.js no GitHub.</div>
 
     <div class="field-group">
       <label>Referência do CUB (mês/ano)</label>
@@ -721,6 +721,10 @@
   Versão 1.1 - 2026 · Departamento de Construção Civil - DCC
 </footer>
 
+<!-- Arquivo com os dados do CUB (valores atuais + histórico). Substitua este arquivo
+     no repositório do GitHub sempre que quiser atualizar o CUB para todos os visitantes. -->
+<script src="cub-data.js"></script>
+
 <script>
 /* ================= CONFIG ================= */
 const DEFAULT_CONFIG = {
@@ -760,12 +764,27 @@ const DEFAULT_CONFIG = {
     t9:   {label:'9. Nivelamento p/ muros e calçadas', rate:120.95, unit:'quantidade'},
   }
 };
+
+/* Sobrepõe os valores vindos de cub-data.js (fonte compartilhada, visível para
+   qualquer visitante) por cima dos valores fixos acima, que servem só de reserva
+   caso o arquivo cub-data.js não seja encontrado. */
+if (window.CUB_DATA && window.CUB_DATA.config) {
+  Object.assign(DEFAULT_CONFIG, window.CUB_DATA.config);
+}
+const CONFIG_PASSWORD_HASH = (window.CUB_DATA && window.CUB_DATA.pwHash)
+  || '00d4f1d6da3ff115422e7b5fb46b28fd8493e1a6b5883c463ca9a70f9bb992bd'; // hash de reserva
+
 let CONFIG = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 
 const CUB_LABELS = {b12:'cub1_2', b3:'cub3', b4:'cub4mais', com:'cubComercial', multi:'cubMultifamiliar'};
 const TIPO_LABELS = {b12:'1 ou 2 banheiros', b3:'3 banheiros', b4:'4 ou mais banheiros', com:'Comercial', multi:'Multifamiliar'};
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const CONFIG_PASSWORD = 'Nova2026';
+
+async function sha256Hex(text){
+  const bytes = new TextEncoder().encode(text);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
 function getCubForPeriod(tipoKey, periodId){
   const field = CUB_LABELS[tipoKey];
@@ -881,9 +900,10 @@ function openConfig(){
   setTimeout(()=>{ const i=document.getElementById('pw-input'); if(i) i.focus(); }, 100);
 }
 function closePwModal(){ document.getElementById('pwModal').classList.remove('open'); }
-function checkPassword(){
+async function checkPassword(){
   const val = document.getElementById('pw-input').value;
-  if(val === CONFIG_PASSWORD){
+  const hash = await sha256Hex(val);
+  if(hash === CONFIG_PASSWORD_HASH){
     closePwModal();
     showConfigModal();
   } else {
@@ -905,7 +925,7 @@ function renderHistoryTable(){
     return;
   }
   const monthOpts = MONTHS.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
-  const head = `<div class="hist-row hist-head"><span>Mês</span><span>Ano</span><span>1-2 banh.</span><span>3 banh.</span><span>4+ banh.</span><span>Comercial</span><span>Multifamiliar</span><span></span></div>`;
+  const head = `<div class="hist-row hist-head"><span>Mês</span><span>Ano</span><span>1-2 banh.</span><span>3 banh.</span><span>4+ banh.</span><span>Comercial</span><span>Multifamiliar</span><span>Galpão</span><span></span></div>`;
   const rows = CONFIG.cubHistory.map(h => `
     <div class="hist-row" data-id="${h.id}">
       <select id="hist-${h.id}-mes">${monthOpts}</select>
@@ -915,6 +935,7 @@ function renderHistoryTable(){
       <input type="number" step="0.01" id="hist-${h.id}-cub4mais" value="${h.cub4mais}">
       <input type="number" step="0.01" id="hist-${h.id}-cubComercial" value="${h.cubComercial}">
       <input type="number" step="0.01" id="hist-${h.id}-cubMultifamiliar" value="${h.cubMultifamiliar}">
+      <input type="number" step="0.01" id="hist-${h.id}-cubGalpao" value="${h.cubGalpao||0}">
       <button class="hist-del" onclick="removeHistoryRow('${h.id}')" title="Remover">&times;</button>
     </div>`).join('');
   wrap.innerHTML = `<div class="hist-scroll">${head}${rows}</div>`;
@@ -958,6 +979,8 @@ function collectHistoryFromInputs(){
     h.cub4mais = parseFloat(document.getElementById('hist-'+h.id+'-cub4mais').value) || 0;
     h.cubComercial = parseFloat(document.getElementById('hist-'+h.id+'-cubComercial').value) || 0;
     h.cubMultifamiliar = parseFloat(document.getElementById('hist-'+h.id+'-cubMultifamiliar').value) || 0;
+    const galpaoEl = document.getElementById('hist-'+h.id+'-cubGalpao');
+    if(galpaoEl) h.cubGalpao = parseFloat(galpaoEl.value) || 0;
   });
 }
 
