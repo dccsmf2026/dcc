@@ -395,7 +395,7 @@
     <button class="subtab-pill" data-sub="reforma" onclick="switchSub('reforma')">Reforma</button>
     <button class="subtab-pill" data-sub="alinhamento" onclick="switchSub('alinhamento')">Alinhamento de Muro</button>
     <button class="subtab-pill" data-sub="demolicao" onclick="switchSub('demolicao')">Demolição</button>
-    <button class="subtab-pill" data-sub="combinado" onclick="switchSub('combinado')">Obra Nova + Reforma</button>
+    <button class="subtab-pill" data-sub="combinado" onclick="switchSub('combinado')">Obra Nova / Acréscimo + Reforma</button>
   </div>
 
   <div class="content-card">
@@ -1284,12 +1284,13 @@ function calcCombinado(){
       ['Obra Nova — Mês/Ano CUB', periodLabel(onPeriodo)],
       ['Obra Nova — Área total', fmtNum(onDesc+onCobred+onCobsem)+' m²'],
       ['Obra Nova — CTO', fmtBRL(onCto)],
+      ['Obra Nova — Base de cálculo (48,85%)', fmtBRL(onBc)],
       ['Obra Nova — ISS (3%)', fmtBRL(onIss)],
       ['Reforma — Mês/Ano CUB', periodLabel(rfPeriodo)],
       ['Reforma — Área total', fmtNum(rfDesc+rfCobred+rfCobsem)+' m²'],
       ['Reforma — CTO', fmtBRL(rfCto)],
       ['Reforma — CTO reduzido ('+fmtNum(CONFIG.pctReducaoReforma)+'%)', fmtBRL(rfCtoReduzido)],
-      ['Reforma — Regime', rfRegimeLabel],
+      ['Reforma — Base de cálculo', fmtBRL(rfBc)],
       ['Reforma — ISS (3%)', fmtBRL(rfIss)],
     ],
     totalLabel:'ISS TOTAL (Obra Nova + Reforma)', totalValue: total, exportName:'ISS_ObraNova_Reforma'
