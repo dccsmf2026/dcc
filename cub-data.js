@@ -17,6 +17,7 @@ window.CUB_DATA = {
     "pctEmpreitada": 48.85,
     "pctISS": 3,
     "pctDemolicao": 10,
+    "pctReducaoReforma": 65,
     "alturaMuro": 1.2,
     "cubHistory": [
       {

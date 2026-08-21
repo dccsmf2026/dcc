@@ -395,6 +395,7 @@
     <button class="subtab-pill" data-sub="reforma" onclick="switchSub('reforma')">Reforma</button>
     <button class="subtab-pill" data-sub="alinhamento" onclick="switchSub('alinhamento')">Alinhamento de Muro</button>
     <button class="subtab-pill" data-sub="demolicao" onclick="switchSub('demolicao')">Demolição</button>
+    <button class="subtab-pill" data-sub="combinado" onclick="switchSub('combinado')">Obra Nova + Reforma</button>
   </div>
 
   <div class="content-card">
@@ -571,6 +572,102 @@
       </div>
     </div>
 
+    <!-- OBRA NOVA + REFORMA (COMBINADO) -->
+    <div class="subpanel" id="sub-combinado">
+      <div class="calc-grid">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+            <h3 class="section-title" style="margin:0;">Obra Nova e Acréscimo</h3>
+            <button class="btn btn-ghost" style="flex:none;padding:7px 14px;font-size:12px;" onclick="resetCombinadoObraNova()">Limpar</button>
+          </div>
+          <div class="field-group">
+            <label>Mês/Ano do CUB a simular</label>
+            <select id="co-on-periodo" onchange="calcCombinado()">
+              <option value="atual">Atual (config vigente)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Tipo de obra</label>
+            <select id="co-on-tipo" onchange="calcCombinado()">
+              <option value="b12">1 ou 2 banheiros</option>
+              <option value="b3">3 banheiros</option>
+              <option value="b4">4 ou mais banheiros</option>
+              <option value="com">Comercial</option>
+              <option value="multi">Multifamiliar</option>
+            </select>
+          </div>
+          <div class="row3">
+            <div class="field-group">
+              <label>Coberta fechada (m²)</label>
+              <input type="number" id="co-on-cobsem" value="0" min="0" step="0.01" oninput="calcCombinado()">
+              <div class="field-hint">sem redução</div>
+            </div>
+            <div class="field-group">
+              <label>Coberta aberta (m²)</label>
+              <input type="number" id="co-on-cobred" value="0" min="0" step="0.01" oninput="calcCombinado()">
+              <div class="field-hint">redução 50%</div>
+            </div>
+            <div class="field-group">
+              <label>Descoberta (m²)</label>
+              <input type="number" id="co-on-desc" value="0" min="0" step="0.01" oninput="calcCombinado()">
+              <div class="field-hint">redução 25%</div>
+            </div>
+          </div>
+          <div class="info-note">Base de cálculo sempre pelo regime de empreitada (48,85% do CTO).</div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:26px 0 18px;padding-top:22px;border-top:1.5px solid var(--paper-2);">
+            <h3 class="section-title" style="margin:0;">Reforma</h3>
+            <button class="btn btn-ghost" style="flex:none;padding:7px 14px;font-size:12px;" onclick="resetCombinadoReforma()">Limpar</button>
+          </div>
+          <div class="field-group">
+            <label>Mês/Ano do CUB a simular</label>
+            <select id="co-rf-periodo" onchange="calcCombinado()">
+              <option value="atual">Atual (config vigente)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Tipo de obra</label>
+            <select id="co-rf-tipo" onchange="calcCombinado()">
+              <option value="b12">1 ou 2 banheiros</option>
+              <option value="b3">3 banheiros</option>
+              <option value="b4">4 ou mais banheiros</option>
+              <option value="com">Comercial</option>
+              <option value="multi">Multifamiliar</option>
+            </select>
+          </div>
+          <div class="row3">
+            <div class="field-group">
+              <label>Coberta fechada (m²)</label>
+              <input type="number" id="co-rf-cobsem" value="0" min="0" step="0.01" oninput="calcCombinado()">
+              <div class="field-hint">sem redução</div>
+            </div>
+            <div class="field-group">
+              <label>Coberta aberta (m²)</label>
+              <input type="number" id="co-rf-cobred" value="0" min="0" step="0.01" oninput="calcCombinado()">
+              <div class="field-hint">redução 50%</div>
+            </div>
+            <div class="field-group">
+              <label>Descoberta (m²)</label>
+              <input type="number" id="co-rf-desc" value="0" min="0" step="0.01" oninput="calcCombinado()">
+              <div class="field-hint">redução 25%</div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Regime de execução</label>
+            <div class="regime-toggle">
+              <div class="regime-opt active" id="co-rf-reg-empreitada" onclick="setRegimeCombinado('empreitada')">Empreitada (48,85%)</div>
+              <div class="regime-opt" id="co-rf-reg-admin" onclick="setRegimeCombinado('admin')">Por Administração</div>
+            </div>
+          </div>
+          <div class="field-group" id="co-rf-admin-pct-wrap" style="display:none;">
+            <label>Percentual da administração (%)</label>
+            <input type="number" id="co-rf-admin-pct" value="0" min="0" max="100" step="0.01" oninput="calcCombinado()">
+          </div>
+        </div>
+        <div class="stamp-wrap"><div id="stamp-combinado"></div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -695,6 +792,7 @@
       <div class="mini-field"><label>% Empreitada (mão de obra)</label><input type="number" step="0.01" id="cfg-pctEmpreitada"></div>
       <div class="mini-field"><label>Alíquota ISS (%)</label><input type="number" step="0.01" id="cfg-pctISS"></div>
       <div class="mini-field"><label>% ISS de Demolição (sobre obra nova)</label><input type="number" step="0.01" id="cfg-pctDemolicao"></div>
+      <div class="mini-field"><label>% Base da Reforma (redução legal)</label><input type="number" step="0.01" id="cfg-pctReducaoReforma"></div>
       <div class="mini-field"><label>Altura fixa alinhamento de muro (m)</label><input type="number" step="0.01" id="cfg-alturaMuro"></div>
     </div>
 
@@ -740,6 +838,7 @@ const DEFAULT_CONFIG = {
   pctEmpreitada: 48.85,
   pctISS: 3,
   pctDemolicao: 10,
+  pctReducaoReforma: 65,
   alturaMuro: 1.2,
   cubHistory: [],
   tlo: {
@@ -803,7 +902,7 @@ function periodLabel(periodId){
   return entry ? MONTHS[parseInt(entry.mes,10)-1] + '/' + entry.ano : 'Atual';
 }
 function buildPeriodoSelects(){
-  const ids = ['on-periodo','rf-periodo','am-periodo','dm-periodo'];
+  const ids = ['on-periodo','rf-periodo','am-periodo','dm-periodo','co-on-periodo','co-rf-periodo'];
   const sorted = [...(CONFIG.cubHistory||[])].sort((a,b)=> (b.ano-a.ano) || (b.mes-a.mes));
   ids.forEach(id=>{
     const sel = document.getElementById(id);
@@ -854,7 +953,7 @@ async function loadConfig(){
 
 async function saveConfig(){
   CONFIG.ref = document.getElementById('cfg-ref').value;
-  ['cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao','cubMulta607Res','cubMulta607NaoRes','pctEmpreitada','pctISS','pctDemolicao','alturaMuro'].forEach(k=>{
+  ['cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao','cubMulta607Res','cubMulta607NaoRes','pctEmpreitada','pctISS','pctDemolicao','pctReducaoReforma','alturaMuro'].forEach(k=>{
     const el = document.getElementById('cfg-'+k);
     CONFIG[k] = parseFloat(el.value) || 0;
   });
@@ -877,7 +976,7 @@ async function saveConfig(){
 
 function fillConfigForm(){
   document.getElementById('cfg-ref').value = CONFIG.ref || '';
-  ['cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao','cubMulta607Res','cubMulta607NaoRes','pctEmpreitada','pctISS','pctDemolicao','alturaMuro'].forEach(k=>{
+  ['cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao','cubMulta607Res','cubMulta607NaoRes','pctEmpreitada','pctISS','pctDemolicao','pctReducaoReforma','alturaMuro'].forEach(k=>{
     document.getElementById('cfg-'+k).value = CONFIG[k];
   });
 }
@@ -1012,6 +1111,15 @@ function setRegime(r){
   calcReforma();
 }
 
+let combinadoRegime = 'empreitada';
+function setRegimeCombinado(r){
+  combinadoRegime = r;
+  document.getElementById('co-rf-reg-empreitada').classList.toggle('active', r==='empreitada');
+  document.getElementById('co-rf-reg-admin').classList.toggle('active', r==='admin');
+  document.getElementById('co-rf-admin-pct-wrap').style.display = r==='admin' ? 'block':'none';
+  calcCombinado();
+}
+
 let multaTipo = 'residencial';
 function setMultaTipo(t){
   multaTipo = t;
@@ -1107,13 +1215,14 @@ function calcReforma(){
   const vCobRed = cub*0.5*cobred;
   const vCobSem = cub*1*cobsem;
   const cto = vDesc+vCobRed+vCobSem;
+  const ctoReduzido = cto*(CONFIG.pctReducaoReforma/100);
   let bc, regimeLabel;
   if(reformaRegime==='empreitada'){
-    bc = cto*(CONFIG.pctEmpreitada/100);
+    bc = ctoReduzido*(CONFIG.pctEmpreitada/100);
     regimeLabel = 'Empreitada ('+fmtNum(CONFIG.pctEmpreitada)+'%)';
   } else {
     const pct = parseFloat(document.getElementById('rf-admin-pct').value) || 0;
-    bc = cto*(pct/100);
+    bc = ctoReduzido*(pct/100);
     regimeLabel = 'Por administração ('+fmtNum(pct)+'%)';
   }
   const iss = bc*(CONFIG.pctISS/100);
@@ -1125,12 +1234,67 @@ function calcReforma(){
       ['CUB utilizado', fmtBRL(cub)],
       ['Área total', fmtNum(desc+cobred+cobsem)+' m²'],
       ['CTO (valor da obra)', fmtBRL(cto)],
+      ['CTO reduzido ('+fmtNum(CONFIG.pctReducaoReforma)+'%)', fmtBRL(ctoReduzido)],
       ['Regime', regimeLabel],
       ['Base de cálculo', fmtBRL(bc)],
     ],
     totalLabel:'ISS a recolher (3%)', totalValue: iss, exportName:'ISS_Reforma'
   });
   return iss;
+}
+
+/* ================= ISS: OBRA NOVA + REFORMA (COMBINADO) ================= */
+function calcCombinado(){
+  // Obra Nova
+  const onTipo = document.getElementById('co-on-tipo').value;
+  const onPeriodo = document.getElementById('co-on-periodo') ? document.getElementById('co-on-periodo').value : 'atual';
+  const onDesc = parseFloat(document.getElementById('co-on-desc').value) || 0;
+  const onCobred = parseFloat(document.getElementById('co-on-cobred').value) || 0;
+  const onCobsem = parseFloat(document.getElementById('co-on-cobsem').value) || 0;
+  const onCub = getCubForPeriod(onTipo, onPeriodo);
+  const onCto = onCub*0.25*onDesc + onCub*0.5*onCobred + onCub*1*onCobsem;
+  const onBc = onCto*(CONFIG.pctEmpreitada/100);
+  const onIss = onBc*(CONFIG.pctISS/100);
+
+  // Reforma
+  const rfTipo = document.getElementById('co-rf-tipo').value;
+  const rfPeriodo = document.getElementById('co-rf-periodo') ? document.getElementById('co-rf-periodo').value : 'atual';
+  const rfDesc = parseFloat(document.getElementById('co-rf-desc').value) || 0;
+  const rfCobred = parseFloat(document.getElementById('co-rf-cobred').value) || 0;
+  const rfCobsem = parseFloat(document.getElementById('co-rf-cobsem').value) || 0;
+  const rfCub = getCubForPeriod(rfTipo, rfPeriodo);
+  const rfCto = rfCub*0.25*rfDesc + rfCub*0.5*rfCobred + rfCub*1*rfCobsem;
+  const rfCtoReduzido = rfCto*(CONFIG.pctReducaoReforma/100);
+  let rfBc, rfRegimeLabel;
+  if(combinadoRegime==='empreitada'){
+    rfBc = rfCtoReduzido*(CONFIG.pctEmpreitada/100);
+    rfRegimeLabel = 'Empreitada ('+fmtNum(CONFIG.pctEmpreitada)+'%)';
+  } else {
+    const pct = parseFloat(document.getElementById('co-rf-admin-pct').value) || 0;
+    rfBc = rfCtoReduzido*(pct/100);
+    rfRegimeLabel = 'Por administração ('+fmtNum(pct)+'%)';
+  }
+  const rfIss = rfBc*(CONFIG.pctISS/100);
+
+  const total = onIss + rfIss;
+
+  renderStamp('stamp-combinado', {
+    tag: 'ISS — Obra Nova + Reforma',
+    lines: [
+      ['Obra Nova — Mês/Ano CUB', periodLabel(onPeriodo)],
+      ['Obra Nova — Área total', fmtNum(onDesc+onCobred+onCobsem)+' m²'],
+      ['Obra Nova — CTO', fmtBRL(onCto)],
+      ['Obra Nova — ISS (3%)', fmtBRL(onIss)],
+      ['Reforma — Mês/Ano CUB', periodLabel(rfPeriodo)],
+      ['Reforma — Área total', fmtNum(rfDesc+rfCobred+rfCobsem)+' m²'],
+      ['Reforma — CTO', fmtBRL(rfCto)],
+      ['Reforma — CTO reduzido ('+fmtNum(CONFIG.pctReducaoReforma)+'%)', fmtBRL(rfCtoReduzido)],
+      ['Reforma — Regime', rfRegimeLabel],
+      ['Reforma — ISS (3%)', fmtBRL(rfIss)],
+    ],
+    totalLabel:'ISS TOTAL (Obra Nova + Reforma)', totalValue: total, exportName:'ISS_ObraNova_Reforma'
+  });
+  return total;
 }
 
 /* ================= ISS: ALINHAMENTO DE MURO ================= */
@@ -1292,6 +1456,23 @@ function resetReforma(){
   document.getElementById('rf-admin-pct').value = 0;
   setRegime('empreitada');
 }
+function resetCombinadoObraNova(){
+  document.getElementById('co-on-tipo').value = 'b12';
+  document.getElementById('co-on-periodo').value = 'atual';
+  document.getElementById('co-on-desc').value = 0;
+  document.getElementById('co-on-cobred').value = 0;
+  document.getElementById('co-on-cobsem').value = 0;
+  calcCombinado();
+}
+function resetCombinadoReforma(){
+  document.getElementById('co-rf-tipo').value = 'b12';
+  document.getElementById('co-rf-periodo').value = 'atual';
+  document.getElementById('co-rf-desc').value = 0;
+  document.getElementById('co-rf-cobred').value = 0;
+  document.getElementById('co-rf-cobsem').value = 0;
+  document.getElementById('co-rf-admin-pct').value = 0;
+  setRegimeCombinado('empreitada');
+}
 function resetAlinhamento(){
   document.getElementById('am-periodo').value = 'atual';
   document.getElementById('am-testada').value = 0;
@@ -1324,6 +1505,7 @@ function resetMulta(){
 function recalcAll(){
   calcObraNova();
   calcReforma();
+  calcCombinado();
   calcAlinhamento();
   calcDemolicao();
   calcTLO();

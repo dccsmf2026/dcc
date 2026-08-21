@@ -155,6 +155,7 @@
       <div class="field-group"><label>% Empreitada</label><input type="number" step="0.01" id="cfg-pctEmpreitada"></div>
       <div class="field-group"><label>Alíquota ISS (%)</label><input type="number" step="0.01" id="cfg-pctISS"></div>
       <div class="field-group"><label>% ISS de Demolição</label><input type="number" step="0.01" id="cfg-pctDemolicao"></div>
+      <div class="field-group"><label>% Base da Reforma (redução legal)</label><input type="number" step="0.01" id="cfg-pctReducaoReforma"></div>
       <div class="field-group"><label>Altura fixa muro (m)</label><input type="number" step="0.01" id="cfg-alturaMuro"></div>
     </div>
   </div>
@@ -198,7 +199,7 @@
 
 <script>
 const CUB_FIELDS = ['cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao'];
-const CFG_FIELDS = ['ref','cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao','cubMulta607Res','cubMulta607NaoRes','pctEmpreitada','pctISS','pctDemolicao','alturaMuro'];
+const CFG_FIELDS = ['ref','cub1_2','cub3','cub4mais','cubComercial','cubMultifamiliar','cubGalpao','cubMulta607Res','cubMulta607NaoRes','pctEmpreitada','pctISS','pctDemolicao','pctReducaoReforma','alturaMuro'];
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DEFAULT_PW_HASH = '00d4f1d6da3ff115422e7b5fb46b28fd8493e1a6b5883c463ca9a70f9bb992bd'; // hash de "Nova2026"
 
